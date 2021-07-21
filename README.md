@@ -1,10 +1,10 @@
 # nmaglev
 
-Erlang implementation of the consistent hashing maglev algorithm
+Erlang implementation of the load balancing maglev algorithm
 
 ## Introduction
 
-MagLev is a [consistent hashing](https://en.wikipedia.org/wiki/Consistent_hashing) algorithm developed at Google and 
+MagLev is a [load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing)) algorithm developed at Google and 
 [published](https://static.googleusercontent.com/media/research.google.com/es//pubs/archive/44824.pdf) in 2016.
 
 It aims to be lightning fast and always accurate due to the use of a deterministic algorithm at the spend 
