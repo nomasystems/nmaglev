@@ -1,4 +1,4 @@
-![ndoc](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=master)
+![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=master)
 
 # nmaglev
 
