@@ -1,3 +1,5 @@
+![ndoc](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=master)
+
 # nmaglev
 
 Erlang implementation of the consistent hashing maglev algorithm
