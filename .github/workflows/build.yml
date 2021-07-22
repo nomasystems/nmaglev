@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - image: erlang:21
           - image: erlang:22
           - image: erlang:23
           - image: erlang:24
