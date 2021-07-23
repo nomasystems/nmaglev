@@ -54,7 +54,6 @@ jobs:
       - name: Post compilation checks
         run: |
           rebar3 dialyzer
-          rebar3 xref
 
       # Cover reports
       - name: Create Cover Reports
