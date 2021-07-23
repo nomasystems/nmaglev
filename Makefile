@@ -26,6 +26,9 @@ clean:
 fmt:
 	$(REBAR) fmt
 
+cover:
+	@$(REBAR) cover
+
 dialyze:
 	@$(REBAR) dialyzer
 
