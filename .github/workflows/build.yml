@@ -50,10 +50,14 @@ jobs:
           name: ct-logs
           path: _build/test/logs
 
+      # POST compile checks
+      - name: Post compilation checks
+        run: |
+          rebar3 dialyzer
+          rebar3 xref
+
       # Cover reports
       - name: Create Cover Reports
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: make cover
 
       - name: Publish Test Report
