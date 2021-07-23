@@ -24,7 +24,7 @@ jobs:
       # Setup
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: webfactory/ssh-agent@v0.5.3
+      - uses: nomasystems/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
@@ -51,7 +51,12 @@ jobs:
           path: _build/test/logs
 
       # Cover reports
-#      - name: Create Cover Reports
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        run: rebar3 do cover,coveralls send
+      - name: Create Cover Reports
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: make cover
+
+      - name: Publish Test Report
+        uses: nomasystems/action-junit-report@v2
+        with:
+          report_paths: '_build/test/logs/**/report.xml'
