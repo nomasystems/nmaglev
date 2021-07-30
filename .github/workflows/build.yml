@@ -34,7 +34,10 @@ jobs:
 
       # PRE Checks
       - name: Checks
-        run: rebar3 fmt --check
+        run: |
+          rebar3 fmt --check
+          rebar3 xref
+          rebar3 dialyzer
 
       # Compile
       - name: Compile
@@ -49,11 +52,6 @@ jobs:
         with:
           name: ct-logs
           path: _build/test/logs
-
-      # POST compile checks
-      - name: Post compilation checks
-        run: |
-          rebar3 dialyzer
 
       # Cover reports
       - name: Create Cover Reports
