@@ -56,7 +56,10 @@ jobs:
       - name: Checks
         env:
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-        run: rebar3 fmt --check
+        run: |
+          rebar3 fmt --check
+          rebar3 xref
+          rebar3 dialyzer
 
       # Compile
       - name: Compile
