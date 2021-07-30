@@ -1,3 +1,5 @@
+![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=master)
+
 # nmaglev
 
 Erlang implementation of the load balancing maglev algorithm
