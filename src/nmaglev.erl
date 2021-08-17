@@ -30,14 +30,14 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
-create(Nodes) ->
+create(Outputs) ->
     LookupSize = ?DEFAULT_LOOKUP_SIZE,
-    create(Nodes, LookupSize).
+    create(Outputs, LookupSize).
 
-create(Nodes, LookupSize) ->
-    NodesLen = length(Nodes),
-    PermutationsTable = permutations(Nodes, LookupSize),
-    lookup_map(PermutationsTable, NodesLen, LookupSize, {0, #{}, NodesLen}).
+create(Outputs, LookupSize) ->
+    OutputsLen = length(Outputs),
+    PermutationsTable = permutations(Outputs, LookupSize),
+    lookup_map(PermutationsTable, OutputsLen, LookupSize, {0, #{}, OutputsLen}).
 
 get(Key, Lookup) ->
     Offset = erlang:phash2(Key, maps:size(Lookup)),
@@ -46,47 +46,47 @@ get(Key, Lookup) ->
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
-lookup_map(_PermutationsTable, _NodesLen, LookupSize, {Filled, FilledMap, _LastNodePos}) when
+lookup_map(_PermutationsTable, _OutputsLen, LookupSize, {Filled, FilledMap, _LastOutputPos}) when
     Filled >= LookupSize
 ->
     FilledMap;
-lookup_map(PermutationsTable, NodesLen, LookupSize, {Filled, FilledMap, LastNodePos}) ->
-    {Permutation, ChosenNode, ChosenNodePos, NewPermutationsTable} = choose_node(
+lookup_map(PermutationsTable, OutputsLen, LookupSize, {Filled, FilledMap, LastOutputPos}) ->
+    {Permutation, ChosenOutput, ChosenOutputPos, NewPermutationsTable} = choose_output(
         PermutationsTable,
-        NodesLen,
+        OutputsLen,
         FilledMap,
-        LastNodePos
+        LastOutputPos
     ),
     lookup_map(
         NewPermutationsTable,
-        NodesLen,
+        OutputsLen,
         LookupSize,
-        {Filled + 1, FilledMap#{Permutation => ChosenNode}, ChosenNodePos}
+        {Filled + 1, FilledMap#{Permutation => ChosenOutput}, ChosenOutputPos}
     ).
 
-choose_node(PermutationsTable, NodesLen, FilledMap, LastNodePos) ->
-    NodePos = mod(LastNodePos, NodesLen) + 1,
-    {Node, NodePermutations} = lists:nth(NodePos, PermutationsTable),
-    [Permutation | RestNodePermutations] = NodePermutations,
+choose_output(PermutationsTable, OutputsLen, FilledMap, LastOutputPos) ->
+    OutputPos = mod(LastOutputPos, OutputsLen) + 1,
+    {Output, OutputPermutations} = lists:nth(OutputPos, PermutationsTable),
+    [Permutation | RestOutputPermutations] = OutputPermutations,
     NewPermutationsTable = lists:keyreplace(
-        Node,
+        Output,
         1,
         PermutationsTable,
-        {Node, RestNodePermutations}
+        {Output, RestOutputPermutations}
     ),
     case maps:is_key(Permutation, FilledMap) of
         false ->
-            {Permutation, Node, NodePos, NewPermutationsTable};
+            {Permutation, Output, OutputPos, NewPermutationsTable};
         true ->
-            choose_node(NewPermutationsTable, NodesLen, FilledMap, NodePos)
+            choose_output(NewPermutationsTable, OutputsLen, FilledMap, OutputPos)
     end.
 
-permutations(Nodes, LookupSize) ->
-    [{Node, node_permutations(Node, LookupSize)} || Node <- Nodes].
+permutations(Outputs, LookupSize) ->
+    [{Output, output_permutations(Output, LookupSize)} || Output <- Outputs].
 
-node_permutations(Node, LookupSize) ->
-    Offset = mod(erlang:phash(Node, LookupSize), LookupSize),
-    Skip = mod(erlang:phash2(Node, LookupSize), LookupSize - 1) + 1,
+output_permutations(Output, LookupSize) ->
+    Offset = mod(fold32(crypto:hash(sha, Output)), LookupSize),
+    Skip = mod(erlang:phash2(Output, LookupSize), LookupSize - 1) + 1,
     [mod(Offset + (Pos * Skip), LookupSize) || Pos <- lists:seq(0, LookupSize - 1)].
 
 mod(A, B) when A > 0 ->
@@ -95,3 +95,17 @@ mod(A, B) when A < 0 ->
     mod(A + B, B);
 mod(0, _) ->
     0.
+
+fold32(Data) ->
+    fold32(Data, 0).
+
+fold32(<<H:32, T/binary>>, Hash) ->
+    fold32(T, Hash bxor H);
+fold32(<<H:24>>, Hash) ->
+    Hash bxor H;
+fold32(<<H:16>>, Hash) ->
+    Hash bxor H;
+fold32(<<H:8>>, Hash) ->
+    Hash bxor H;
+fold32(<<>>, Hash) ->
+    Hash.
