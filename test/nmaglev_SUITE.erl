@@ -80,6 +80,7 @@ distribution() ->
     [{userdata, [{doc, "Tests the distribution of the maglev hashing algorithm"}]}].
 
 distribution(_Conf) ->
+    StartTime = erlang:timestamp(),
     Nodes = ["node" ++ integer_to_list(N) || N <- lists:seq(0, 50)],
     MaglevMap = nmaglev:create(Nodes),
     Distribution = lists:foldl(
@@ -104,13 +105,19 @@ distribution(_Conf) ->
         lists:all(Fun, DistributionList)
     end,
     [true = CheckDeviation(NodeCount) || {_Node, NodeCount} <- DistributionList],
+    Time = timer:now_diff(erlang:timestamp(), StartTime),
+    ct:print("Distribution test elapsed time: ~p ms", [(Time / 1000)]),
     ok.
 
 consistency() ->
     [{userdata, [{doc, "Tests the consistency of the maglev hashing algorithm"}]}].
 
 consistency(_Conf) ->
-    [ok = consistency_test(NodesNum) || NodesNum <- lists:seq(2, 200)].
+    StartTime = erlang:timestamp(),
+    [ok = consistency_test(NodesNum) || NodesNum <- lists:seq(2, 200)],
+    Time = timer:now_diff(erlang:timestamp(), StartTime),
+    ct:print("Consistency test elapsed time: ~p ms", [(Time / 1000)]),
+    ok.
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
