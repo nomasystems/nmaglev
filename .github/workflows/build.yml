@@ -34,18 +34,15 @@ jobs:
 
       # PRE Checks
       - name: Checks
-        run: |
-          rebar3 fmt --check
-          rebar3 xref
-          rebar3 dialyzer
+        run: rebar3 check
 
       # Compile
       - name: Compile
-        run: make
+        run: rebar3 compile
 
       # Tests
       - name: Run tests
-        run: make test
+        run: rebar3 test
       - name: Store test logs
         uses: actions/upload-artifact@v1
         if: always()
@@ -55,7 +52,7 @@ jobs:
 
       # Cover reports
       - name: Create Cover Reports
-        run: make cover
+        run: rebar3 cover
 
       - name: Publish Test Report
         uses: nomasystems/action-junit-report@v2
