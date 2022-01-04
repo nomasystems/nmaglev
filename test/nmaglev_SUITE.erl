@@ -13,8 +13,6 @@
 %% limitations under the License.
 -module(nmaglev_SUITE).
 
-%%% INCLUDE FILES
-
 %%% EXTERNAL EXPORTS
 -compile([nowarn_export_all, export_all]).
 -define(TIMES, 1000000).
