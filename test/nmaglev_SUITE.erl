@@ -35,27 +35,27 @@ suite() ->
 %%% INIT SUITE EXPORTS
 %%%-----------------------------------------------------------------------------
 init_per_suite(Conf) ->
-    setup_teardown_util:setup_suite(Conf).
+    nct_util:setup_suite(Conf).
 
 %%%-----------------------------------------------------------------------------
 %%% END SUITE EXPORTS
 %%%-----------------------------------------------------------------------------
 end_per_suite(Conf) ->
-    setup_teardown_util:teardown_suite(Conf).
+    nct_util:teardown_suite(Conf).
 
 %%%-----------------------------------------------------------------------------
 %%% INIT CASE EXPORTS
 %%%-----------------------------------------------------------------------------
 init_per_testcase(Case, Conf) ->
     ct:print("Starting test case ~p", [Case]),
-    tracing_util:init_traces(Case),
+    nct_util:init_traces(Case),
     Conf.
 
 %%%-----------------------------------------------------------------------------
 %%% END CASE EXPORTS
 %%%-----------------------------------------------------------------------------
 end_per_testcase(Case, Conf) ->
-    tracing_util:end_traces(Case),
+    nct_util:end_traces(Case),
     ct:print("Test case ~p completed", [Case]),
     Conf.
 
