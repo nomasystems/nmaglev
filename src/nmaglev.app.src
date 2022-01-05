@@ -1,4 +1,3 @@
-%%% -*- mode:erlang -*-
 {application, nmaglev, [
     {description, "Erlang implementation of the consistent hashing maglev algorithm"},
     {vsn, "1.0.0"},

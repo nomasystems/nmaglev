@@ -14,15 +14,11 @@
 %%%
 -module(nmaglev).
 
-%%% INCLUDE FILES
-
 %%% EXTERNAL EXPORTS
 -export([create/1, create/2, get/2]).
 
 %%% MACROS
 -define(DEFAULT_LOOKUP_SIZE, 65537).
-
-%%% RECORDS
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
