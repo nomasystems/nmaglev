@@ -28,7 +28,7 @@ create(Outputs) ->
     create(Outputs, LookupSize).
 
 create(Outputs, LookupSize) ->
-    OutputsLen = length(Outputs),
+    OutputsLen = erlang:length(Outputs),
     PermutationsTable = permutations(Outputs, LookupSize),
     lookup_map(PermutationsTable, OutputsLen, LookupSize, {0, #{}, OutputsLen}).
 

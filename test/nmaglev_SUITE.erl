@@ -15,19 +15,12 @@
 
 %%% EXTERNAL EXPORTS
 -compile([nowarn_export_all, export_all]).
--define(TIMES, 1000000).
 
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 all() ->
     [consistency, distribution].
-
-sequences() ->
-    [].
-
-suite() ->
-    [{timetrap, {minutes, 60}}].
 
 %%%-----------------------------------------------------------------------------
 %%% INIT SUITE EXPORTS
@@ -65,7 +58,7 @@ distribution() ->
 
 distribution(_Conf) ->
     StartTime = erlang:timestamp(),
-    Nodes = ["node" ++ integer_to_list(N) || N <- lists:seq(0, 50)],
+    Nodes = ["node" ++ erlang:integer_to_list(N) || N <- lists:seq(0, 50)],
     MaglevMap = nmaglev:create(Nodes),
     Distribution = lists:foldl(
         fun({_Permutation, Node}, Acc) ->
@@ -83,7 +76,7 @@ distribution(_Conf) ->
     DistributionList = maps:to_list(Distribution),
     CheckDeviation = fun(NodeCount) ->
         Fun = fun({_OtherNode, OtherNodeCount}) ->
-            Deviation = (abs((NodeCount - OtherNodeCount) / NodeCount) * 100),
+            Deviation = (erlang:abs((NodeCount - OtherNodeCount) / NodeCount) * 100),
             Deviation < 10
         end,
         lists:all(Fun, DistributionList)
@@ -107,14 +100,14 @@ consistency(_Conf) ->
 %%% INTERNAL FUNCTIONS
 %%%-----------------------------------------------------------------------------
 consistency_test(NodesNum) ->
-    Nodes = ["node" ++ integer_to_list(N) || N <- lists:seq(0, NodesNum)],
+    Nodes = ["node" ++ erlang:integer_to_list(N) || N <- lists:seq(0, NodesNum)],
     MaglevMap = nmaglev:create(Nodes, 997),
     Node = nmaglev:get(self(), MaglevMap),
 
     NodesWithoutOtherNode = remove_other_node(Nodes, Node),
     MaglevMapWithoutOneNode = nmaglev:create(NodesWithoutOtherNode, 997),
     true = Node == nmaglev:get(self(), MaglevMapWithoutOneNode),
-    NewNode = "node" ++ integer_to_list(NodesNum + 1),
+    NewNode = "node" ++ erlang:integer_to_list(NodesNum + 1),
     MaglevMapPlusOneNode = nmaglev:create(Nodes ++ [NewNode], 997),
     ok =
         case nmaglev:get(self(), MaglevMapPlusOneNode) of
