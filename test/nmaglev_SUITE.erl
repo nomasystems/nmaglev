@@ -13,6 +13,8 @@
 %% limitations under the License.
 -module(nmaglev_SUITE).
 
+-include_lib("stdlib/include/assert.hrl").
+
 %%% EXTERNAL EXPORTS
 -compile([nowarn_export_all, export_all]).
 
@@ -20,7 +22,7 @@
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
 all() ->
-    [consistency, distribution].
+    [usage, consistency, distribution].
 
 %%%-----------------------------------------------------------------------------
 %%% INIT SUITE EXPORTS
@@ -53,6 +55,30 @@ end_per_testcase(Case, Conf) ->
 %%%-----------------------------------------------------------------------------
 %%% TEST CASES
 %%%-----------------------------------------------------------------------------
+usage() ->
+    [{userdata, [{doc, "Tests the usage of the library"}]}].
+
+usage(_Conf) ->
+    Nodes = ["node" ++ erlang:integer_to_list(N) || N <- lists:seq(0, 50)],
+    MaglevTable = nmaglev:create(Nodes),
+
+    NodeForKey1 = nmaglev:get(<<"key1">>, MaglevTable),
+    NodeForKey2 = nmaglev:get(<<"key2">>, MaglevTable),
+    NodeForKey3 = nmaglev:get(<<"key3">>, MaglevTable),
+
+    ?assertEqual(NodeForKey1, nmaglev:get(<<"key1">>, MaglevTable)),
+    ?assertEqual(NodeForKey2, nmaglev:get(<<"key2">>, MaglevTable)),
+    ?assertEqual(NodeForKey3, nmaglev:get(<<"key3">>, MaglevTable)),
+
+    NewNodes = lists:delete(NodeForKey1, Nodes),
+    NewMaglevTable = nmaglev:create(NewNodes),
+
+    ?assertNotEqual(NodeForKey1, nmaglev:get(<<"key1">>, NewMaglevTable)),
+    ?assertEqual(NodeForKey2, nmaglev:get(<<"key2">>, NewMaglevTable)),
+    ?assertEqual(NodeForKey3, nmaglev:get(<<"key3">>, NewMaglevTable)),
+
+    ok.
+
 distribution() ->
     [{userdata, [{doc, "Tests the distribution of the maglev hashing algorithm"}]}].
 

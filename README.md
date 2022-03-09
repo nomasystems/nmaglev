@@ -1,12 +1,14 @@
 # nmaglev
 
-![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=master)
+![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=main)
 
 Erlang implementation of the load balancing maglev algorithm.
 
 ## Introduction
 
-MagLev [\[1\]](#references) is a [load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing)) algorithm developed at Google and [published](https://static.googleusercontent.com/media/research.google.com/es//pubs/archive/44824.pdf) in 2016.
+MagLev [\[1\]](#references) is a network [load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing)) system developed at Google and [published](https://static.googleusercontent.com/media/research.google.com/es//pubs/archive/44824.pdf) in 2016. 
+
+As part of the system a consistent hashing algorithm is proposed and that is what this library contains, an implementation of the consistent hashing algorithm part of the MagLev system.
 
 It aims to be lightning fast and always accurate due to the use of a deterministic algorithm at the spend 
 of needing more computational power when there is a change in the list of possible outputs as it needs
@@ -15,7 +17,7 @@ to recalculate the internal hashing table.
 ## How to use it
 
 1. Create your maglev table with the list of possible outputs: ```MaglevTable = nmaglev:create([a,b,c,d]).```
-2. Use the table: ```Output = nmaglev:get(<<"some bin">>, MaglevTable).```
+2. Use the get function to retrieve the output for your input: ```Output = nmaglev:get(<<"some bin">>, MaglevTable).```
 
 ## About lookup table sizes
 

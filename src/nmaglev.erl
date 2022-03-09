@@ -14,6 +14,9 @@
 %%%
 -module(nmaglev).
 
+%%%  SPECS
+-include("nmaglev_specs.hrl").
+
 %%% EXTERNAL EXPORTS
 -export([create/1, create/2, get/2]).
 
