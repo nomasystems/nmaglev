@@ -2,7 +2,7 @@
 
 ![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=main)
 
-Erlang implementation of the load balancing maglev algorithm.
+Erlang implementation of the consistent hashing algorithm used in the load balancing MagLev system.
 
 ## Introduction
 
