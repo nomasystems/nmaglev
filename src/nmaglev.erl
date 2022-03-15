@@ -14,27 +14,40 @@
 %%%
 -module(nmaglev).
 
-%%%  SPECS
--include("nmaglev_specs.hrl").
-
 %%% EXTERNAL EXPORTS
 -export([create/1, create/2, get/2]).
 
 %%% MACROS
 -define(DEFAULT_LOOKUP_SIZE, 65537).
 
+%%%TYPES
+-type maglev_table() :: term().
+
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
+
+-spec create(Outputs) -> MaglevTable when
+    Outputs :: list(),
+    MaglevTable :: maglev_table().
 create(Outputs) ->
     LookupSize = ?DEFAULT_LOOKUP_SIZE,
     create(Outputs, LookupSize).
+
+-spec create(Outputs, LookupSize) -> MaglevTable when
+    Outputs :: list(),
+    LookupSize :: non_neg_integer(),
+    MaglevTable :: maglev_table().
 
 create(Outputs, LookupSize) ->
     OutputsLen = erlang:length(Outputs),
     PermutationsTable = permutations(Outputs, LookupSize),
     lookup_map(PermutationsTable, OutputsLen, LookupSize, {0, #{}, OutputsLen}).
 
+-spec get(Key, MaglevTable) -> Output when
+    Key :: binary(),
+    MaglevTable :: maglev_table(),
+    Output :: term().
 get(Key, Lookup) ->
     Offset = erlang:phash2(Key, maps:size(Lookup)),
     maps:get(Offset, Lookup).
