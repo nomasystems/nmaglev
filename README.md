@@ -1,6 +1,6 @@
 # nmaglev
 
-![nmaglev](https://github.com/nomasystems/nmaglev/workflows/nmaglev/badge.svg?branch=main)
+![nmaglev](https://github.com/nomasystems/nmaglev/actions/workflows/build.yml/badge.svg)
 
 Erlang implementation of the consistent hashing algorithm used in the load balancing MagLev system.
 
