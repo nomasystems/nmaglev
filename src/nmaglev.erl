@@ -11,7 +11,6 @@
 %% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
-%%%
 -module(nmaglev).
 
 %%% EXTERNAL EXPORTS
@@ -26,7 +25,6 @@
 %%%-----------------------------------------------------------------------------
 %%% EXTERNAL EXPORTS
 %%%-----------------------------------------------------------------------------
-
 -spec create(Outputs) -> MaglevTable when
     Outputs :: list(),
     MaglevTable :: maglev_table().
@@ -38,7 +36,6 @@ create(Outputs) ->
     Outputs :: list(),
     LookupSize :: non_neg_integer(),
     MaglevTable :: maglev_table().
-
 create(Outputs, LookupSize) ->
     OutputsLen = erlang:length(Outputs),
     PermutationsTable = permutations(Outputs, LookupSize),
@@ -47,10 +44,15 @@ create(Outputs, LookupSize) ->
 -spec get(Key, MaglevTable) -> Output when
     Key :: binary(),
     MaglevTable :: maglev_table(),
-    Output :: term().
+    Output :: term() | {error, empty_maglev_table}.
 get(Key, Lookup) ->
-    Offset = erlang:phash2(Key, maps:size(Lookup)),
-    maps:get(Offset, Lookup).
+    case maps:size(Lookup) of
+        0 ->
+            {error, empty_maglev_table};
+        Size ->
+            Offset = erlang:phash2(Key, Size),
+            maps:get(Offset, Lookup)
+    end.
 
 %%%-----------------------------------------------------------------------------
 %%% INTERNAL FUNCTIONS
