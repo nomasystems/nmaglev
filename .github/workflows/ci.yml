@@ -7,13 +7,14 @@ on:
     branches: [main]
 
 env:
-  OTP-VERSION: 25.2.3
   REBAR3-VERSION: 3.20.0
 
 jobs:
   check:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        otp: ['25.2.3', '24.3']
     steps:
       - uses: actions/checkout@v3
 
@@ -23,7 +24,7 @@ jobs:
 
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{ env.OTP-VERSION }}
+          otp-version: ${{ matrix.otp }}
           rebar3-version: ${{ env.REBAR3-VERSION }}
 
       - uses: actions/cache@v3.2.6
@@ -32,7 +33,7 @@ jobs:
           path: |
             ~/.cache/rebar3
             _build
-          key: ${{ runner.os }}-${{ env.OTP-VERSION }}-${{ env.REBAR3-VERSION }}-${{ hashFiles('rebar.lock') }}
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ env.REBAR3-VERSION }}-${{ hashFiles('rebar.lock') }}
 
       - name: Compile
         run: |
