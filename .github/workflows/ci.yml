@@ -1,4 +1,4 @@
-name: nmaglev ci
+name: CI
 
 on:
   push:
@@ -6,46 +6,43 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  REBAR3-VERSION: 3.20.0
-
 jobs:
-  check:
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        otp: ['25.2.3', '24.3']
+        combo:
+        - otp-version: '25.2'
+          rebar3-version: '3.18.0'
+        - otp-version: '26.2'
+          rebar3-version: '3.23.0'
+        - otp-version: '27.2'
+          rebar3-version: '3.24.0'
+        - otp-version: '28.0'
+          rebar3-version: '3.25.0'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: webfactory/ssh-agent@v0.7.0
+      - uses: erlef/setup-beam@v1.18
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          otp-version: ${{ matrix.combo.otp-version }}
+          rebar3-version: ${{ matrix.combo.rebar3-version }}
 
-      - uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{ matrix.otp }}
-          rebar3-version: ${{ env.REBAR3-VERSION }}
-
-      - uses: actions/cache@v3.2.6
+      - uses: actions/cache@v4
         id: rebar3-cache
         with:
           path: |
             ~/.cache/rebar3
             _build
-          key: ${{ runner.os }}-${{ matrix.otp }}-${{ env.REBAR3-VERSION }}-${{ hashFiles('rebar.lock') }}
-
-      - name: Compile
-        run: |
-          rebar3 clean
-          rebar3 compile
+          key: ${{ runner.os }}-${{ runner.arch }}-${{ matrix.combo.otp-version }}-${{ matrix.combo.rebar3-version }}-${{ hashFiles('rebar.lock') }}
 
       - run: rebar3 check
 
+      - run: rebar3 compile
+
       - run: rebar3 test
 
-      - name: Create test summary
-        uses: test-summary/action@v1
+      - uses: test-summary/action@v2
         if: always()
         with:
           paths: '_build/test/logs/**/report.xml'
